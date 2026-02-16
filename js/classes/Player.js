@@ -11,12 +11,20 @@ class Player{
 
         this.isMovingRight = false;
         this.isMovingLeft = false;
+
+        this.sprite = new Image();
+        this.sprite.src = '../../img/mario.png';
         
     }
 
     draw(ctx){
         ctx.fillStyle = 'red';
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.fillRect(this.x, this.y, this.width, this.height,);
+    }
+
+    drawsprite(ctx){
+        // Placeholder for sprite drawing logic
+        ctx.drawImage(this.sprite, 165, 0, 20, 20, this.x, this.y, 50, 50);
     }
 
     drawHitbox(ctx){
@@ -24,7 +32,7 @@ class Player{
         ctx.strokeRect(this.x, this.y, this.width, this.height);
     }
 
-    move(){
+    move({GAME_WIDTH, GAME_HEIGHT}){
         window.addEventListener('keydown', (e) => {           
             if(e.code === 'ArrowRight'){
                 this.speedX = 4;  
@@ -33,9 +41,25 @@ class Player{
             } else if(e.code === 'ArrowLeft'){
                 this.speedX = -4;
             }
+
+            if(e.code === 'Space' && this.onGround){
+                this.speedY = -150;
+                console.log('Jump!');
+            }
         });
 
         this.x += this.speedX;
+        this.y += this.speedY;
+
+        window.addEventListener('keyup', (e) => {
+            if(e.code === 'ArrowRight' || e.code === 'ArrowLeft'){
+                this.speedX = 0;
+                this.isMovingRight = false;
+                this.isMovingLeft = false;
+            }
+        });
+
+
 
         // Apply gravity
         if(!this.onGround){
@@ -47,14 +71,25 @@ class Player{
         this.y += this.speedY;
 
         // Simple ground collision
-        if(this.y + this.height >= 550){
-            this.y = 550 - this.height;
+        if(this.y + this.height >= GAME_HEIGHT - 50){
+            this.y = GAME_HEIGHT - 50 - this.height;
             this.onGround = true;
         } else {
             this.onGround = false;
         }
     }
-   
+
+    collision(objects){
+        objects.forEach(object => {
+            if(this.x < object.x + object.width &&  
+               this.x + this.width > object.x &&
+               this.y < object.y + object.height &&
+               this.y + this.height > object.y) {
+                console.log('Collision detected with an object!');
+            }
+        });
+    }
+
     update(){
         
     }
