@@ -9,9 +9,7 @@ class Player{
         this.marioSprite.src = '../../img/Sprites/mario.png';
 
         this.keyPressed = {
-            "Space": false,
-            "ArrowLeft": false,
-            "ArrowRight": false,
+            
         }
 
         this.gravity = 8;
@@ -23,50 +21,31 @@ class Player{
         ctx.fillRect(this.postionX, this.postionY, this.width, this.height)
     }
     
-    movement(canvas){
+    movement(canvas, deltaTime){
+        this.postionY += this.gravity;
 
-        
+        if( this.postionY > canvas.height - this.height){
+            this.postionY = canvas.height - this.height;
+        }
+
         window.addEventListener('keydown', e=>{
-           
-            
-            if(e.code == "Space"){
-                this.postionY -= 1
-            }
-            // else if(e.code == "ArrowLeft"){
-            //     this.postionX -= 10;    
-            // }
-            // else if(e.code == "ArrowRight"){
-            //     this.postionX += 10;    
-            // }
-
-            
-
-        });
-
-        window.addEventListener('keyup', e=>{
-          
-        });
-
-        // this.postionY += this.gravity;    
-
-        // if(this.postionY + this.width > canvas.height){
-        //     this.postionY = canvas.height - this.height;
-        // }
+            console.log(e)
+        })
     }
 
-    animation(ctx){
+    spriteAnimation(ctx){
         let args = [
             this.marioSprite, //Image Sprite
 
-            0, //sx
+            49, //sx
             0, //sy
-            16, //sWidth
+            15, //sWidth
             30, //sHeight
 
             this.postionX, //dx
             this.postionY, //dy
             this.width, //dWidth
-            this.height //dHeight
+            this.height//dHeight
         ];
         ctx.drawImage(...args);
     }}

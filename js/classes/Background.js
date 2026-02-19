@@ -6,6 +6,7 @@ class Background {
     }
 
     draw(ctx) {
+        
         ctx.fillStyle = 'skyblue';
         ctx.fillRect(0, 0, this.width, this.height);
     }
