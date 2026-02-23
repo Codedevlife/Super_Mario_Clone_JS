@@ -18,21 +18,20 @@ class Mario{
 
 
        // FÍSICA (Valores em pixels por segundo)
-        this.vy = 0;          // Velocidade vertical atual
-        this.g = 0.1;        // Gravidade (px/s^2)
-        this.speed = 250;     // Velocidade horizontal (px/s)
-        this.jumpForce = -600; // Força do pulo (px/s)
-        this.onGround = false;
-
+        this.velocidadeQueda = 0;
+        this.valociadeAndar = 250;
+        this.gravidade = 1500;       
+        this.forcaDoPulo = -1500;
+        this.noChao = false;
 
         // Controle de teclas
-        this.keys = {};
-        this.initInput();
+        this.teclas = {};
+        this.capturaTeclas();
     }
 
-    initInput(){
-        window.addEventListener('keydown', e => this.keys[e.code] = true);
-        window.addEventListener('keyup', e => this.keys[e.code] = false);
+    capturaTeclas(){
+        window.addEventListener('keydown', e => this.teclas[e.code] = true);
+        window.addEventListener('keyup', e => this.teclas[e.code] = false);
     }
 
     draw(ctx){
@@ -40,26 +39,21 @@ class Mario{
         ctx.fillRect(this.x, this.y, this.w, this.h);
     }
 
-    update(deltaTime) {
-        // 1. Aplica Gravidade à velocidade vertical
-        this.vy += this.g * deltaTime;
-        this.y += this.vy * deltaTime;
+    update(deltaTime) {        
 
-        // 2. Movimentação Horizontal
-        if (this.keys['ArrowRight']) this.x += this.speed * deltaTime;
-        if (this.keys['ArrowLeft']) this.x -= this.speed * deltaTime;
+        this.velocidadeQueda += this.gravidade * deltaTime;
+        this.y += this.velocidadeQueda * deltaTime;
 
-        // 3. Pulo (Só pula se estiver no chão)
-        if (this.keys['Space'] && this.onGround) {
-            this.vy = this.jumpForce;
-            this.onGround = false;
+        if(this.teclas['Space'] && this.noChao ){
+            this.velocidadeQueda = this.forcaDoPulo;
+            this.noChao = false;
+            
         }
-
-        // 4. Colisão com o Chão
-        if (this.y > GAME_HEIGHT - this.h) {
+        
+        if( this.y > GAME_HEIGHT - this.h ){
             this.y = GAME_HEIGHT - this.h;
-            this.vy = 0;
-            this.onGround = true;
+            this.velocidadeQueda = 0;
+            this.noChao = true;
         }
     }  
 }
@@ -68,7 +62,7 @@ class Mario{
 let player = new Mario(10, GAME_HEIGHT / 2 , 50, 50);
 
 function loop(currentTime) {
-    let deltaTime = (currentTime);
+    let deltaTime = getDeltaTime(currentTime);
     clearRect();
     // --- Lógica ---
 
