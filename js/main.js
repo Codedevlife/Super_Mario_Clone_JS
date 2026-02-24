@@ -20,8 +20,8 @@ class Mario{
        // FÍSICA (Valores em pixels por segundo)
         this.velocidadeQueda = 0;
         this.valociadeAndar = 250;
-        this.gravidade = 1500;       
-        this.forcaDoPulo = -1500;
+        this.gravidade = 3000;       
+        this.forcaDoPulo = -1000;
         this.noChao = false;
 
         // Controle de teclas
@@ -39,17 +39,23 @@ class Mario{
         ctx.fillRect(this.x, this.y, this.w, this.h);
     }
 
-    update(deltaTime) {        
+    update(deltaTime) {       
+
+        if( this.teclas['Space'] && this.noChao ){
+            this.velocidadeQueda = this.forcaDoPulo;
+            this.noChao = false;
+            console.log('pulando')         
+        }
+        else if(this.teclas['ArrowRight']){
+            this.x += 10;
+        }
+        else if(this.teclas['ArrowLeft']){
+            this.x -= 10;
+        }
 
         this.velocidadeQueda += this.gravidade * deltaTime;
         this.y += this.velocidadeQueda * deltaTime;
-
-        if(this.teclas['Space'] && this.noChao ){
-            this.velocidadeQueda = this.forcaDoPulo;
-            this.noChao = false;
-            
-        }
-        
+                
         if( this.y > GAME_HEIGHT - this.h ){
             this.y = GAME_HEIGHT - this.h;
             this.velocidadeQueda = 0;
