@@ -18,14 +18,19 @@ class Mario{
 
 
        // FÍSICA (Valores em pixels por segundo)
-        this.velocidadeQueda = 0;
-        this.velocidadeAndar = 0;
-        this.gravidade = 3000;       
+        this.gravidade = 3000;        
+        this.velocidadeQueda = 0;        
         this.forcaDoPulo = -1000;
-        this.forcaDeAceleracao = 50;
-        this.valocidadeMaxima = 1500;
+
+        this.valocidadeHorizontal = 0;        
+        this.valocidadeMaxima = 600;  
+        this.forcaDeAceleracao = 2000;        
+        this.friccao = 0.95;
+
         this.noChao = false;
         this.correndo = false;
+        this.andando = false;
+        this.estaMovendo = false;
 
         // Controle de teclas
         this.teclas = {};
@@ -43,49 +48,52 @@ class Mario{
     }
 
     update(deltaTime) {       
-        // console.log(this.teclas)
+        
         if( this.teclas['Space'] && this.noChao ){
             this.velocidadeQueda = this.forcaDoPulo;
             this.noChao = false;
+
         }
-        else if(this.teclas['ArrowRight'] && !this.teclas['ArrowLeft']){
+        else if(this.teclas['ArrowRight']){
+            this.valocidadeHorizontal += this.forcaDeAceleracao * deltaTime;
+            this.estaMovendo = true;
+        }
+        else if(this.teclas['ArrowLeft']){
+            this.valocidadeHorizontal -= this.forcaDeAceleracao * deltaTime;
+            this.estaMovendo = true;
+        }
+        else if(!this.teclas['ArrowLeft'] || !this.teclas['ArrowRight']){
             
-            this.x += this.velocidadeAndar * deltaTime;
-            if( this.x > GAME_WIDTH){
-                this.x = 0 - this.w;
+            if(!this.estaMovendo){
+                this.valocidadeHorizontal *= this.friccao;
             }
-        }
-        else if(this.teclas['ArrowLeft'] && !this.teclas['ArrowRight'] ){
             
-            this.x -= this.velocidadeAndar * deltaTime;
-            if( this.x < 0 - this.w){
-                this.x = GAME_WIDTH;
+            if( Math.abs(this.valocidadeHorizontal) < 1 ){
+                this.valocidadeHorizontal = 0;                
             }
-
-        }else if(!this.teclas['ArrowLeft'] && !this.teclas['ArrowRight']){
-            this.correndo = false;
-            this.velocidadeAndar = 0;
-            
+            this.estaMovendo = false;
         }
 
-        if( this.teclas['KeyD'] && (this.teclas['ArrowLeft'] || this.teclas['ArrowRight']) ){
-            //Validar e o player deve ccomeçar corrente ou correr ao poucos 
-            this.velocidadeAndar = this.valocidadeMaxima;
-        }
+        if (this.valocidadeHorizontal > this.valocidadeMaxima) this.valocidadeHorizontal = this.valocidadeMaxima;
+        if (this.valocidadeHorizontal < -this.valocidadeMaxima) this.valocidadeHorizontal = -this.valocidadeMaxima;
 
-        if( this.velocidadeAndar > 1000){
-            this.correndo = true;
-        }
         
-        this.velocidadeAndar = this.velocidadeAndar>this.valocidadeMaxima ? this.valocidadeMaxima: this.velocidadeAndar;
-        this.velocidadeAndar += this.forcaDeAceleracao + deltaTime;
         this.velocidadeQueda += this.gravidade * deltaTime;
         this.y += this.velocidadeQueda * deltaTime;
-                
+        this.x += this.valocidadeHorizontal * deltaTime;
+
         if( this.y > GAME_HEIGHT - this.h ){
             this.y = GAME_HEIGHT - this.h;
             this.velocidadeQueda = 0;
             this.noChao = true;
+        }
+
+        if( this.x < 0 - this.w){
+            this.x = GAME_WIDTH;
+        }
+
+        if( this.x > GAME_WIDTH){
+            this.x = 0 - this.w;
         }
     }  
 }
