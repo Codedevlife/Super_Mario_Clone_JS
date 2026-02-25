@@ -19,10 +19,13 @@ class Mario{
 
        // FÍSICA (Valores em pixels por segundo)
         this.velocidadeQueda = 0;
-        this.valociadeAndar = 250;
+        this.velocidadeAndar = 0;
         this.gravidade = 3000;       
         this.forcaDoPulo = -1000;
+        this.forcaDeAceleracao = 50;
+        this.valocidadeMaxima = 1500;
         this.noChao = false;
+        this.correndo = false;
 
         // Controle de teclas
         this.teclas = {};
@@ -40,19 +43,42 @@ class Mario{
     }
 
     update(deltaTime) {       
-
+        // console.log(this.teclas)
         if( this.teclas['Space'] && this.noChao ){
             this.velocidadeQueda = this.forcaDoPulo;
             this.noChao = false;
-            console.log('pulando')         
         }
-        else if(this.teclas['ArrowRight']){
-            this.x += 10;
+        else if(this.teclas['ArrowRight'] && !this.teclas['ArrowLeft']){
+            
+            this.x += this.velocidadeAndar * deltaTime;
+            if( this.x > GAME_WIDTH){
+                this.x = 0 - this.w;
+            }
         }
-        else if(this.teclas['ArrowLeft']){
-            this.x -= 10;
+        else if(this.teclas['ArrowLeft'] && !this.teclas['ArrowRight'] ){
+            
+            this.x -= this.velocidadeAndar * deltaTime;
+            if( this.x < 0 - this.w){
+                this.x = GAME_WIDTH;
+            }
+
+        }else if(!this.teclas['ArrowLeft'] && !this.teclas['ArrowRight']){
+            this.correndo = false;
+            this.velocidadeAndar = 0;
+            
         }
 
+        if( this.teclas['KeyD'] && (this.teclas['ArrowLeft'] || this.teclas['ArrowRight']) ){
+            //Validar e o player deve ccomeçar corrente ou correr ao poucos 
+            this.velocidadeAndar = this.valocidadeMaxima;
+        }
+
+        if( this.velocidadeAndar > 1000){
+            this.correndo = true;
+        }
+        
+        this.velocidadeAndar = this.velocidadeAndar>this.valocidadeMaxima ? this.valocidadeMaxima: this.velocidadeAndar;
+        this.velocidadeAndar += this.forcaDeAceleracao + deltaTime;
         this.velocidadeQueda += this.gravidade * deltaTime;
         this.y += this.velocidadeQueda * deltaTime;
                 
@@ -70,8 +96,8 @@ let player = new Mario(10, GAME_HEIGHT / 2 , 50, 50);
 function loop(currentTime) {
     let deltaTime = getDeltaTime(currentTime);
     clearRect();
-    // --- Lógica ---
 
+    // --- Lógica ---
     player.update(deltaTime);    
     player.draw(ctx);
     
