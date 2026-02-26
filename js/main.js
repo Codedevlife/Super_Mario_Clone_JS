@@ -19,6 +19,7 @@ class Sprite{
 
         this.image.onload = ()=>this.spriteCarregada = true;
         this.frames = [];
+        this.currentFrame = 0;
     }
 
     crop({x,y,w,h}){
@@ -26,7 +27,7 @@ class Sprite{
     }
     
     draw(ctx, x, y, w, h){
-        let frame0 = this.frames[0];
+        let frame0 = this.frames[this.currentFrame];
 
         ctx.drawImage(this.image, 
             frame0.x, frame0.y,
@@ -35,12 +36,25 @@ class Sprite{
             x, y,            
             w, h);
     }
+
+    update(){
+        let random = Math.floor(Math.random() * 50 + 1);
+
+        if( random % 2 == 0)
+            
+
+        this.currentFrame += 1;
+        
+        if( this.currentFrame >= this.frames.length ){
+            this.currentFrame = 0;
+        }
+    }
 }
 
 
 
-let marioSprite = new Sprite('Mario', '../../img/Sprites/mario.png');
-marioSprite.crop({x:112,y:2,w:16,h:30});
+
+// console.log(marioSprite);
 
 class Bloco{
     constructor(x,y,w,h){
@@ -87,11 +101,33 @@ class Mario{
         // Controle de teclas
         this.teclas = {};
         this.capturaTeclas();
+
+        this.marioSprite = {};
+        this.createMarioSprite();
     }
 
     capturaTeclas(){
         window.addEventListener('keydown', e => this.teclas[e.code] = true);
         window.addEventListener('keyup', e => this.teclas[e.code] = false);
+    }
+
+    createMarioSprite(){
+        this.marioSprite = new Sprite('Mario', '../../img/Sprites/mario.png');
+
+        let marioFrames =  
+                {
+                    "walking":{
+                        "frame-0": {x:49,y:2,w:14,h:29},
+                        "frame-1": {x:32,y:2,w:15,h:28},
+                        "frame-2": {x:16,y:2,w:16,h:27},
+                        "frame-3": {x: 0,y:2,w:16,h:27}
+                    }
+                };
+
+        for( let frame in marioFrames.walking ){
+            this.marioSprite.crop(marioFrames.walking[frame]);
+        }
+
     }
 
     draw(ctx){
@@ -101,6 +137,10 @@ class Mario{
 
     update(deltaTime) {       
         
+        this.marioSprite.update();
+        this.marioSprite.draw(ctx, player.x, player.y,  player.w, player.h);
+
+    
         if( this.teclas['Space'] && this.noChao ){
             this.velocidadeQueda = this.forcaDoPulo;
             this.noChao = false;
@@ -151,7 +191,7 @@ class Mario{
 }
 
 
-let player = new Mario(10, GAME_HEIGHT / 2 , 50, 50);
+let player = new Mario(10, GAME_HEIGHT / 2 , 70, 70);
 let bloco = new Bloco( 200, 400, 50, 50);
 
 function loop(currentTime) {
@@ -161,9 +201,8 @@ function loop(currentTime) {
     // --- Lógica ---
     bloco.draw(ctx);
     player.update(deltaTime);    
-    player.draw(ctx);
-    marioSprite.draw(ctx, player.x, player.y,  player.w, player.h);
-       
+    // player.draw(ctx);
+    
 
     requestAnimationFrame(loop);
 }
