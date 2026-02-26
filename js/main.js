@@ -8,6 +8,58 @@ const GAME_HEIGHT = canvas.height = 600;
 //Física do jogo
 const physics = {};
 
+class Sprite{
+    constructor(nome, url){
+        this.name = nome;
+        this.image = new Image();
+        this.image.src = url;
+
+        this.spriteCarregada = false;
+
+
+        this.image.onload = ()=>this.spriteCarregada = true;
+        this.frames = [];
+    }
+
+    crop({x,y,w,h}){
+        this.frames.push({x,y,w,h});
+    }
+    
+    draw(ctx, x, y, w, h){
+        let frame0 = this.frames[0];
+
+        ctx.drawImage(this.image, 
+            frame0.x, frame0.y,
+            frame0.w, frame0.h,
+
+            x, y,            
+            w, h);
+    }
+}
+
+
+
+let marioSprite = new Sprite('Mario', '../../img/Sprites/mario.png');
+marioSprite.crop({x:112,y:2,w:16,h:30});
+
+class Bloco{
+    constructor(x,y,w,h){
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+    }
+
+    draw(ctx){
+        ctx.fillStyle = 'yellow';
+        ctx.fillRect(this.x, this.y, this.w, this.h);
+    }
+
+    update(){
+
+    }
+}
+
 
 class Mario{
     constructor(x, y, w, h){
@@ -66,6 +118,7 @@ class Mario{
             
             if(!this.estaMovendo){
                 this.valocidadeHorizontal *= this.friccao;
+                // console.log(this.valocidadeHorizontal, this.friccao);
             }
             
             if( Math.abs(this.valocidadeHorizontal) < 1 ){
@@ -76,7 +129,6 @@ class Mario{
 
         if (this.valocidadeHorizontal > this.valocidadeMaxima) this.valocidadeHorizontal = this.valocidadeMaxima;
         if (this.valocidadeHorizontal < -this.valocidadeMaxima) this.valocidadeHorizontal = -this.valocidadeMaxima;
-
         
         this.velocidadeQueda += this.gravidade * deltaTime;
         this.y += this.velocidadeQueda * deltaTime;
@@ -100,15 +152,17 @@ class Mario{
 
 
 let player = new Mario(10, GAME_HEIGHT / 2 , 50, 50);
+let bloco = new Bloco( 200, 400, 50, 50);
 
 function loop(currentTime) {
     let deltaTime = getDeltaTime(currentTime);
     clearRect();
 
     // --- Lógica ---
+    bloco.draw(ctx);
     player.update(deltaTime);    
     player.draw(ctx);
-    
+    marioSprite.draw(ctx, player.x, player.y,  player.w, player.h);
        
 
     requestAnimationFrame(loop);
