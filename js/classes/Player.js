@@ -1,12 +1,12 @@
 
+import {ctx, GAME_HEIGHT, GAME_WIDTH} from "./environment.js";
 import Sprite from "./Sprite.js";
 class Player{
-    constructor(x, y, w, h, gameEnv){
+    constructor(x, y, w, h){
         this.x = x;
         this.y = y;
         this.w = w;
-        this.h = h;
-        this.gameEnv = gameEnv;
+        this.h = h;        ;
 
        // FÍSICA (Valores em pixels por segundo)
         this.gravidade = 3000;        
@@ -38,7 +38,7 @@ class Player{
 
     createSprite(){
         
-        this.sprite = new Sprite('../img/Sprites/mario.png', this.gameEnv);
+        this.sprite = new Sprite('../img/Sprites/mario.png');
 
         let marioFrames =  
                 {
@@ -57,8 +57,8 @@ class Player{
     }
 
     draw(){
-        this.gameEnv.ctx.fillStyle = 'red';
-        this.gameEnv.ctx.fillRect(this.x, this.y, this.w, this.h);
+        ctx.fillStyle = 'red';
+        ctx.fillRect(this.x, this.y, this.w, this.h);
     }
 
     update(deltaTime) {       
@@ -102,17 +102,17 @@ class Player{
         this.y += this.velocidadeQueda * deltaTime;
         this.x += this.valocidadeHorizontal * deltaTime;
 
-        if( this.y > this.gameEnv.canvas.height - this.h ){
-            this.y = this.gameEnv.canvas.height - this.h;
+        if( this.y > GAME_HEIGHT - this.h ){
+            this.y = GAME_HEIGHT - this.h;
             this.velocidadeQueda = 0;
             this.noChao = true;
         }
 
         if( this.x < 0 - this.w){
-            this.x = this.gameEnv.canvas.width;
+            this.x = GAME_WIDTH;
         }
 
-        if( this.x > this.gameEnv.canvas.height){
+        if( this.x > GAME_WIDTH){
             this.x = 0 - this.w;
         }
     }  

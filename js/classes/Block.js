@@ -1,16 +1,15 @@
-
+import {ctx} from "./environment.js";
 class Bloco{
-    constructor(x,y,w,h, gameEnv){
+    constructor(x,y,w,h){
         this.x = x;
         this.y = y;
         this.w = w;
-        this.h = h;
-        this.gameEnv = gameEnv;
+        this.h = h;        
     }
 
     draw(){
-        this.gameEnv.ctx.fillStyle = 'yellow';
-        this.gameEnv.ctx.fillRect(this.x, this.y, this.w, this.h);
+        ctx.fillStyle = 'yellow';
+        ctx.fillRect(this.x, this.y, this.w, this.h);
     }
 
     update(){

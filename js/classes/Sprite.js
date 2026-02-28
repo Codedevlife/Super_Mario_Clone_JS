@@ -1,8 +1,8 @@
+import {ctx} from "./environment.js";
 class Sprite{
-    constructor(src, gameEnv){
+    constructor(src){
         this.image = new Image();
         this.image.src = src;
-        this.gameEnv = gameEnv;
 
         this.spriteCarregada = false;
 
@@ -24,7 +24,7 @@ class Sprite{
     draw(x, y, w, h){
         let frame0 = this.frames[this.frameIndex]; 
                
-        this.gameEnv.ctx.drawImage(this.image, 
+        ctx.drawImage(this.image, 
             frame0.x, frame0.y,
             frame0.w, frame0.h,
 

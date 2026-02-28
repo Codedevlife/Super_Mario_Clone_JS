@@ -1,8 +1,8 @@
-import gameEnv from "./environment.js";
+import {ctx, GAME_HEIGHT, GAME_WIDTH} from "./environment.js";
 
 export function clearRect(){
-    gameEnv.ctx.fillStyle = 'skyblue';
-    gameEnv.ctx.fillRect(0,0, gameEnv.canvas.width, gameEnv.canvas.height);
+    ctx.fillStyle = 'skyblue';
+    ctx.fillRect(0,0, GAME_WIDTH, GAME_HEIGHT);
 }
 
 let lastTime = 0;

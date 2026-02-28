@@ -5,23 +5,9 @@ import Block from './Blocks.js';
 
 class Game{
     constructor(canvas, ctx, width, height){
-        this.canvas = canvas;
-        this.ctx = ctx;
-        this.width = width;
-        this.height = height;
-
-        
-        this.background = {};
-        this.player = {};
-
-        this.enemies = [];
-        this.objects = [];
-
-        this.gameOver = false;
-
-        this.scale = 5;
-
-        this.deltaTime = 0;
+        this.muedas;
+        this.vidas;
+        this.checkPoint;
     }
 
     start(){
