@@ -1,4 +1,5 @@
 import {ctx} from "./environment.js";
+
 class Sprite{
     constructor(src){
         this.image = new Image();
@@ -9,31 +10,37 @@ class Sprite{
         this.image.onload = ()=>this.spriteCarregada = true;
 
 
-        this.frames = [];
-        this.gameFrame = 0;
+        this.frames = {};        
         this.frameIndex = 0;
+        this.gameFrame = 0;
         this.staggerFrames = 4;
 
-        //document.body.append(this.image);
+        this.currentAnimation = 'idle';
     }
 
-    crop({x,y,w,h}){
-        this.frames.push({x,y,w,h});
+    crop(spritesAnimationPosition){
+        this.frames = spritesAnimationPosition;
     }
     
-    draw(x, y, w, h){
-        let frame0 = this.frames[this.frameIndex]; 
-               
+    draw(animation, x, y, w, h){
+        
+        this.currentAnimation = animation;
+
+        let frame = this.frames[this.currentAnimation][Object.keys(this.frames[this.currentAnimation])[this.frameIndex]];        
+        if(!frame) return;
+        
         ctx.drawImage(this.image, 
-            frame0.x, frame0.y,
-            frame0.w, frame0.h,
+            frame.x, frame.y,
+            frame.w, frame.h,
 
             x, y,            
             w, h);
     }
 
-    update(){
-    //   Math.floor(this.gameFrame/this.staggerFrames) / totalFrames;
+    update(deltaTime){
+        this.gameFrame += 1;        
+        let length = Object.keys(this.frames[this.currentAnimation]).length;        
+        this.frameIndex = Math.floor(this.gameFrame/this.staggerFrames) % length;
     }
 }
 

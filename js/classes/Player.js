@@ -1,6 +1,8 @@
 
 import {ctx, GAME_HEIGHT, GAME_WIDTH} from "./environment.js";
 import Sprite from "./Sprite.js";
+import spriteAnimation from '../../resorces/world.json' with {type: 'json'};
+
 class Player{
     constructor(x, y, w, h){
         this.x = x;
@@ -13,7 +15,7 @@ class Player{
         this.velocidadeQueda = 0;        
         this.forcaDoPulo = -1000;
 
-        this.valocidadeHorizontal = 0;        
+        this.velocidadeHorizontal = 0;        
         this.valocidadeMaxima = 600;  
         this.forcaDeAceleracao = 2000;        
         this.friccao = 0.95;
@@ -22,7 +24,8 @@ class Player{
         this.correndo = false;
         this.andando = false;
         this.estaMovendo = false;
-
+        this.direcao = 1; // 1 - apontado para direita / 0-apontado para esquerda
+       
         // Controle de teclas
         this.teclas = {};
         this.capturaTeclas();
@@ -39,20 +42,7 @@ class Player{
     createSprite(){
         
         this.sprite = new Sprite('../img/Sprites/mario.png');
-
-        let marioFrames =  
-                {
-                    "walk":{
-                        "frame-0": {x:49,y:2,w:14,h:29},
-                        "frame-1": {x:32,y:2,w:15,h:28},
-                        "frame-2": {x:16,y:2,w:16,h:27},
-                        "frame-3": {x: 0,y:2,w:16,h:27}
-                    }
-                };
-
-        for( let frame in marioFrames.walk ){
-            this.sprite.crop(marioFrames.walk[frame]);
-        }
+        this.sprite.crop(spriteAnimation.sprites.mario);
 
     }
 
@@ -62,45 +52,77 @@ class Player{
     }
 
     update(deltaTime) {       
-        this.draw();
-
-        this.sprite.update(deltaTime);
-        this.sprite.draw(this.x, this.y, this.w, this.h);
-
         
-    
+        
+        this.draw();
+        
+       
+        if(this.velocidadeHorizontal < 0){
+            this.direcao = 0;
+        }else{
+            this.direcao = 1;
+        }          
+        
+        this.sprite.update(deltaTime);
+
+        ctx.save();
+
+        if(this.andando){
+
+            if(this.direcao == 1){           
+                ctx.translate(this.x + this.w, this.y);
+                ctx.scale(-1,1);
+                this.sprite.draw('walk', 0, 0, this.w, this.h);
+            }else{
+                this.sprite.draw('walk', this.x, this.y, this.w, this.h);
+            }            
+        }else{
+            if(this.direcao == 1){           
+                ctx.translate(this.x + this.w, this.y);
+                ctx.scale(-1,1);
+                this.sprite.draw('idle', 0, 0, this.w, this.h);
+            }else{
+                this.sprite.draw('idle', this.x, this.y, this.w, this.h);
+            } 
+        }   
+        
+        ctx.restore();
+
         if( this.teclas['Space'] && this.noChao ){
             this.velocidadeQueda = this.forcaDoPulo;
             this.noChao = false;
 
         }
         else if(this.teclas['ArrowRight']){
-            this.valocidadeHorizontal += this.forcaDeAceleracao * deltaTime;
+            this.velocidadeHorizontal += this.forcaDeAceleracao * deltaTime;
             this.estaMovendo = true;
+            this.andando = true;
         }
         else if(this.teclas['ArrowLeft']){
-            this.valocidadeHorizontal -= this.forcaDeAceleracao * deltaTime;
+            this.velocidadeHorizontal -= this.forcaDeAceleracao * deltaTime;
             this.estaMovendo = true;
+            this.andando = true;
         }
         else if(!this.teclas['ArrowLeft'] || !this.teclas['ArrowRight']){
             
             if(!this.estaMovendo){
-                this.valocidadeHorizontal *= this.friccao;
-                // console.log(this.valocidadeHorizontal, this.friccao);
+                this.velocidadeHorizontal *= this.friccao;
+                // console.log(this.velocidadeHorizontal, this.friccao);
             }
             
-            if( Math.abs(this.valocidadeHorizontal) < 1 ){
-                this.valocidadeHorizontal = 0;                
+            if( Math.abs(this.velocidadeHorizontal) < 1 ){
+                this.velocidadeHorizontal = 0;                
             }
             this.estaMovendo = false;
+            this.andando = false;
         }
 
-        if (this.valocidadeHorizontal > this.valocidadeMaxima) this.valocidadeHorizontal = this.valocidadeMaxima;
-        if (this.valocidadeHorizontal < -this.valocidadeMaxima) this.valocidadeHorizontal = -this.valocidadeMaxima;
+        if (this.velocidadeHorizontal > this.valocidadeMaxima) this.velocidadeHorizontal = this.valocidadeMaxima;
+        if (this.velocidadeHorizontal < -this.valocidadeMaxima) this.velocidadeHorizontal = -this.valocidadeMaxima;
         
         this.velocidadeQueda += this.gravidade * deltaTime;
         this.y += this.velocidadeQueda * deltaTime;
-        this.x += this.valocidadeHorizontal * deltaTime;
+        this.x += this.velocidadeHorizontal * deltaTime;
 
         if( this.y > GAME_HEIGHT - this.h ){
             this.y = GAME_HEIGHT - this.h;
