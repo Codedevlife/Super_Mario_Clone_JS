@@ -54,37 +54,37 @@ class Player{
     update(deltaTime) {       
         
         
-        this.draw();
+        // this.draw();
         
        
-        if(this.velocidadeHorizontal < 0){
-            this.direcao = 0;
-        }else{
-            this.direcao = 1;
-        }          
-        
-        this.sprite.update(deltaTime);
+        this.direcao = (this.velocidadeHorizontal < 0) ? 0 : 1;
+        let animName = 'idle';
+
+        if (!this.noChao) {
+            // Se não está no chão, a prioridade máxima é o pulo
+            animName = 'jump';
+        } else if (this.andando) {
+            // Se está no chão e a carregar nas teclas, anda
+            animName = 'walk';
+        } else {
+            // Se está no chão e parado, fica em idle
+            animName = 'idle';
+        }
+
+        this.sprite.update();
 
         ctx.save();
 
-        if(this.andando){
-
-            if(this.direcao == 1){           
-                ctx.translate(this.x + this.w, this.y);
-                ctx.scale(-1,1);
-                this.sprite.draw('walk', 0, 0, this.w, this.h);
-            }else{
-                this.sprite.draw('walk', this.x, this.y, this.w, this.h);
-            }            
-        }else{
-            if(this.direcao == 1){           
-                ctx.translate(this.x + this.w, this.y);
-                ctx.scale(-1,1);
-                this.sprite.draw('idle', 0, 0, this.w, this.h);
-            }else{
-                this.sprite.draw('idle', this.x, this.y, this.w, this.h);
-            } 
-        }   
+        if (this.direcao === 1) { 
+        // Se sua imagem original olha para esquerda, direcao 1 (Direita) precisa de flip
+        ctx.translate(this.x + this.w, this.y);
+        ctx.scale(-1, 1);
+        this.sprite.draw(animName, 0, 0, this.w, this.h);
+        } else {
+            // Direcao 0 (Esquerda) desenha normal
+            this.sprite.draw(animName, this.x, this.y, this.w, this.h);
+        }
+               
         
         ctx.restore();
 
@@ -104,7 +104,8 @@ class Player{
             this.andando = true;
         }
         else if(!this.teclas['ArrowLeft'] || !this.teclas['ArrowRight']){
-            
+             
+
             if(!this.estaMovendo){
                 this.velocidadeHorizontal *= this.friccao;
                 // console.log(this.velocidadeHorizontal, this.friccao);
