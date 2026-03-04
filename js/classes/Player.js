@@ -3,6 +3,8 @@ import {ctx, GAME_HEIGHT, GAME_WIDTH} from "./environment.js";
 import Sprite from "./Sprite.js";
 import spriteAnimation from '../../resorces/world.json' with {type: 'json'};
 
+ctx.imageSmoothingEnabled = false;
+
 class Player{
     constructor(x, y, w, h){
         this.x = x;
@@ -16,7 +18,7 @@ class Player{
         this.forcaDoPulo = -1000;
 
         this.velocidadeHorizontal = 0;        
-        this.valocidadeMaxima = 600;  
+        this.valocidadeMaxima = 700;  
         this.forcaDeAceleracao = 2000;        
         this.friccao = 0.95;
 
@@ -24,6 +26,7 @@ class Player{
         this.correndo = false;
         this.andando = false;
         this.estaMovendo = false;
+        this.agachado = false;
         this.direcao = 1; // 1 - apontado para direita / 0-apontado para esquerda
        
         // Controle de teclas
@@ -54,7 +57,6 @@ class Player{
     update(deltaTime) {       
         
         
-        // this.draw();
         
        
         this.direcao = (this.velocidadeHorizontal < 0) ? 0 : 1;
@@ -66,39 +68,49 @@ class Player{
         } else if (this.andando) {
             // Se está no chão e a carregar nas teclas, anda
             animName = 'walk';
+        } else if (this.correndo && Math.abs(this.velocidadeHorizontal) > 100){
+
+            // Se está no chão e a carregar nas teclas, anda
+            animName = 'run';
+            console.log(animName);
+
+        } else if (this.agachado) {
+            // Se está no chão e a carregar nas teclas, anda
+            animName = 'down';
         } else {
             // Se está no chão e parado, fica em idle
             animName = 'idle';
-        }
-
+        }   
+        
         this.sprite.update();
 
         ctx.save();
 
         if (this.direcao === 1) { 
-        // Se sua imagem original olha para esquerda, direcao 1 (Direita) precisa de flip
-        ctx.translate(this.x + this.w, this.y);
-        ctx.scale(-1, 1);
-        this.sprite.draw(animName, 0, 0, this.w, this.h);
+            // Se sua imagem original olha para esquerda, direcao 1 (Direita) precisa de flip
+            ctx.translate(this.x + this.w, this.y);
+            ctx.scale(-1, 1);
+            this.sprite.draw(animName, 0, 0, this.w, this.h);
         } else {
             // Direcao 0 (Esquerda) desenha normal
             this.sprite.draw(animName, this.x, this.y, this.w, this.h);
-        }
-               
+        }              
         
-        ctx.restore();
+        ctx.restore();        
 
         if( this.teclas['Space'] && this.noChao ){
             this.velocidadeQueda = this.forcaDoPulo;
-            this.noChao = false;
-
+            this.noChao = false;        
+        }
+        else if(this.teclas['ArrowDown'] && this.noChao){
+            this.agachado = true;
         }
         else if(this.teclas['ArrowRight']){
             this.velocidadeHorizontal += this.forcaDeAceleracao * deltaTime;
             this.estaMovendo = true;
             this.andando = true;
-        }
-        else if(this.teclas['ArrowLeft']){
+            
+        }else if(this.teclas['ArrowLeft']){
             this.velocidadeHorizontal -= this.forcaDeAceleracao * deltaTime;
             this.estaMovendo = true;
             this.andando = true;
@@ -108,7 +120,6 @@ class Player{
 
             if(!this.estaMovendo){
                 this.velocidadeHorizontal *= this.friccao;
-                // console.log(this.velocidadeHorizontal, this.friccao);
             }
             
             if( Math.abs(this.velocidadeHorizontal) < 1 ){
@@ -116,6 +127,8 @@ class Player{
             }
             this.estaMovendo = false;
             this.andando = false;
+            this.agachado = false;            
+            this.correndo = false;            
         }
 
         if (this.velocidadeHorizontal > this.valocidadeMaxima) this.velocidadeHorizontal = this.valocidadeMaxima;
