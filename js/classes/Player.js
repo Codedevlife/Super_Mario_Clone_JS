@@ -18,7 +18,7 @@ class Player{
         this.forcaDoPulo = -1000;
 
         this.velocidadeHorizontal = 0;        
-        this.valocidadeMaxima = 800;  
+        this.valocidadeMaxima = 600;  
         this.forcaDeAceleracao = 2000;        
         this.friccao = 0.95;
 
@@ -45,6 +45,7 @@ class Player{
     createSprite(){      
         this.sprite = new Sprite('../img/Sprites/mario.png');
         this.sprite.crop(spriteAnimation.sprites.mario);
+        this.sprite.staggerFrames = 6;
     }
 
     draw(){
@@ -53,8 +54,9 @@ class Player{
     }
 
     update(deltaTime) {
-        this.draw();
-        // console.log(this.teclas)
+
+        // this.draw();
+        
         // this.direcao = (this.velocidadeHorizontal < 0) ? 0 : 1;
 
         let animName = 'idle';

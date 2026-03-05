@@ -21,7 +21,7 @@ class Sprite{
     }
     
     draw(animation, x, y, w, h){        
-        console.log(this)
+        // console.log(this)
         // 1. Verificação de troca de animação
         if (this.currentAnimation !== animation) {
             this.currentAnimation = animation;
