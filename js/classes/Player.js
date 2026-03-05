@@ -10,7 +10,7 @@ class Player{
         this.x = x;
         this.y = y;
         this.w = w;
-        this.h = h;        ;
+        this.h = h;
 
        // FÍSICA (Valores em pixels por segundo)
         this.gravidade = 3000;        
@@ -18,7 +18,7 @@ class Player{
         this.forcaDoPulo = -1000;
 
         this.velocidadeHorizontal = 0;        
-        this.valocidadeMaxima = 700;  
+        this.valocidadeMaxima = 800;  
         this.forcaDeAceleracao = 2000;        
         this.friccao = 0.95;
 
@@ -42,11 +42,9 @@ class Player{
         window.addEventListener('keyup', e => this.teclas[e.code] = false);
     }
 
-    createSprite(){
-        
+    createSprite(){      
         this.sprite = new Sprite('../img/Sprites/mario.png');
         this.sprite.crop(spriteAnimation.sprites.mario);
-
     }
 
     draw(){
@@ -54,12 +52,11 @@ class Player{
         ctx.fillRect(this.x, this.y, this.w, this.h);
     }
 
-    update(deltaTime) {       
-        
-        
-        
-       
-        this.direcao = (this.velocidadeHorizontal < 0) ? 0 : 1;
+    update(deltaTime) {
+        this.draw();
+        // console.log(this.teclas)
+        // this.direcao = (this.velocidadeHorizontal < 0) ? 0 : 1;
+
         let animName = 'idle';
 
         if (!this.noChao) {
@@ -68,11 +65,9 @@ class Player{
         } else if (this.andando) {
             // Se está no chão e a carregar nas teclas, anda
             animName = 'walk';
-        } else if (this.correndo && Math.abs(this.velocidadeHorizontal) > 100){
-
+        } else if (this.correndo){
             // Se está no chão e a carregar nas teclas, anda
             animName = 'run';
-            console.log(animName);
 
         } else if (this.agachado) {
             // Se está no chão e a carregar nas teclas, anda
@@ -103,32 +98,41 @@ class Player{
             this.noChao = false;        
         }
         else if(this.teclas['ArrowDown'] && this.noChao){
-            this.agachado = true;
+            this.agachado = true;            
         }
         else if(this.teclas['ArrowRight']){
             this.velocidadeHorizontal += this.forcaDeAceleracao * deltaTime;
-            this.estaMovendo = true;
             this.andando = true;
-            
+            this.direcao = 1;          
+ 
         }else if(this.teclas['ArrowLeft']){
             this.velocidadeHorizontal -= this.forcaDeAceleracao * deltaTime;
-            this.estaMovendo = true;
             this.andando = true;
+            this.direcao = 0;
         }
-        else if(!this.teclas['ArrowLeft'] || !this.teclas['ArrowRight']){
-             
-
-            if(!this.estaMovendo){
-                this.velocidadeHorizontal *= this.friccao;
-            }
+        else if(!this.teclas['ArrowLeft'] || 
+                !this.teclas['ArrowRight'] ||
+                !this.teclas['ArrowDown'] ){
             
+            this.velocidadeHorizontal *= this.friccao;
+            
+            if( Math.abs(this.velocidadeHorizontal) < 100 ){
+                this.correndo = false;
+            }
+
             if( Math.abs(this.velocidadeHorizontal) < 1 ){
                 this.velocidadeHorizontal = 0;                
             }
+
             this.estaMovendo = false;
             this.andando = false;
             this.agachado = false;            
-            this.correndo = false;            
+                        
+        }
+
+        if(Math.abs(this.velocidadeHorizontal) > 700 && this.teclas['ShiftLeft']){
+            this.andando = false;
+            this.correndo = true;                
         }
 
         if (this.velocidadeHorizontal > this.valocidadeMaxima) this.velocidadeHorizontal = this.valocidadeMaxima;
