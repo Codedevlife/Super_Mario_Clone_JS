@@ -18,7 +18,7 @@ class Player{
         this.forcaDoPulo = -1000;
 
         this.velocidadeHorizontal = 0;        
-        this.valocidadeMaxima = 600;  
+        this.valocidadeMaxima = 800;  
         this.forcaDeAceleracao = 2000;        
         this.friccao = 0.95;
 
@@ -67,10 +67,12 @@ class Player{
         } else if (this.andando) {
             // Se está no chão e a carregar nas teclas, anda
             animName = 'walk';
+            this.sprite.staggerFrames = 4;
         } else if (this.correndo){
             // Se está no chão e a carregar nas teclas, anda
             animName = 'run';
-
+            this.sprite.staggerFrames = 3;
+            console.log('corrente');
         } else if (this.agachado) {
             // Se está no chão e a carregar nas teclas, anda
             animName = 'down';
@@ -132,7 +134,7 @@ class Player{
                         
         }
 
-        if(Math.abs(this.velocidadeHorizontal) > 700 && this.teclas['ShiftLeft']){
+        if(Math.abs(this.velocidadeHorizontal) > (this.valocidadeMaxima)){
             this.andando = false;
             this.correndo = true;                
         }

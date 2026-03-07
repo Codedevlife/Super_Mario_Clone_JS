@@ -10,12 +10,21 @@ class Bloco{
         this.h = h; 
         
         this.sprite = {};
+        
+
+        this.spriteAnimation = 'idle';
+
+        this.spriteSrc = '';
+    }
+
+    setSpriteSrc(src){
+        this.spriteSrc = src;
         this.createSprite();
     }
 
-     createSprite(){        
-        this.sprite = new Sprite('../img/Sprites/blocks.webp');
-        this.sprite.crop(spriteAnimation.sprites.questionBlock);        
+    createSprite(){
+        this.sprite = new Sprite(this.spriteSrc);
+        this.sprite.crop(spriteAnimation.sprites.blocks);        
         this.sprite.staggerFrames = 10;
     }
 
@@ -25,10 +34,17 @@ class Bloco{
     }
 
     update(){
-        // this.draw();
-        this.sprite.draw('rotation', this.x, this.y, this.w, this.h);
+        this.draw();
+        this.sprite.draw(this.spriteAnimation, this.x, this.y, this.w, this.h);
         this.sprite.update();
+        console.log(this.spriteAnimation);
     }
+
+    drawImage(img){
+        this.spriteAnimation = img;
+        this.update();
+    }
+
 }
 
 
