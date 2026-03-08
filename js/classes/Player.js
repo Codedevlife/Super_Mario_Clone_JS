@@ -20,7 +20,7 @@ class Player{
         this.velocidadeHorizontal = 0;        
         this.valocidadeMaxima = 800;  
         this.forcaDeAceleracao = 2000;        
-        this.friccao = 0.95;
+        this.friccao = 0.90;
 
         this.noChao = false;
         this.correndo = false;
@@ -71,8 +71,7 @@ class Player{
         } else if (this.correndo){
             // Se está no chão e a carregar nas teclas, anda
             animName = 'run';
-            this.sprite.staggerFrames = 3;
-            console.log('corrente');
+            this.sprite.staggerFrames = 3;            
         } else if (this.agachado) {
             // Se está no chão e a carregar nas teclas, anda
             animName = 'down';
@@ -104,12 +103,12 @@ class Player{
         else if(this.teclas['ArrowDown'] && this.noChao){
             this.agachado = true;            
         }
-        else if(this.teclas['ArrowRight']){
+        else if(this.teclas['ArrowRight']){            
             this.velocidadeHorizontal += this.forcaDeAceleracao * deltaTime;
             this.andando = true;
-            this.direcao = 1;          
+            this.direcao = 1;         
  
-        }else if(this.teclas['ArrowLeft']){
+        }else if(this.teclas['ArrowLeft']){            
             this.velocidadeHorizontal -= this.forcaDeAceleracao * deltaTime;
             this.andando = true;
             this.direcao = 0;
@@ -134,10 +133,10 @@ class Player{
                         
         }
 
-        if(Math.abs(this.velocidadeHorizontal) > (this.valocidadeMaxima)){
-            this.andando = false;
-            this.correndo = true;                
-        }
+        // if(Math.abs(this.velocidadeHorizontal) > (this.valocidadeMaxima)){
+        //     this.andando = false;
+        //     this.correndo = true;                
+        // }
 
         if (this.velocidadeHorizontal > this.valocidadeMaxima) this.velocidadeHorizontal = this.valocidadeMaxima;
         if (this.velocidadeHorizontal < -this.valocidadeMaxima) this.velocidadeHorizontal = -this.valocidadeMaxima;
