@@ -1,11 +1,20 @@
-import {ctx} from "./environment.js";
+import {ctx, gameAssets} from "./environment.js";
 
 class Sprite{
     constructor(src){
-        this.image = new Image();
-        this.image.src = src;
-        this.spriteCarregada = false;
-        this.image.onload = ()=>this.spriteCarregada = true;
+        
+        if(gameAssets[src]){
+           this.image = gameAssets[src];
+           this.spriteCarregada = true;
+        }else{
+            this.image = new Image();
+            this.image.src = src;
+
+            this.spriteCarregada = false;
+            this.image.onload = ()=>{this.spriteCarregada = true;
+                gameAssets[src] = this.image;            
+            }
+        }
 
 
         this.frames = {};        
@@ -14,6 +23,7 @@ class Sprite{
         this.staggerFrames = 4;
         this.currentAnimation = 'idle';
 
+        
     }
 
     crop(spritesAnimationPosition){

@@ -42,7 +42,7 @@ class Player{
         window.addEventListener('keyup', e => this.teclas[e.code] = false);
     }
 
-    createSprite(){      
+    createSprite(){       
         this.sprite = new Sprite('../img/Sprites/mario.png');
         this.sprite.crop(spriteAnimation.sprites.mario);
         this.sprite.staggerFrames = 6;

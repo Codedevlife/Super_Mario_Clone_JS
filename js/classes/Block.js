@@ -11,40 +11,33 @@ class Bloco{
         
         this.sprite = {};
         
-
-        this.spriteAnimation = 'idle';
-
-        this.spriteSrc = '';
+        this.blockType = 'sky';
+    }
+    
+    setBlockType(type){
+        this.blockType = type;
     }
 
-    setSpriteSrc(src){
-        this.spriteSrc = src;
-        this.createSprite();
+    setSpriteAnimation(animation){
+        this.spriteAnimation = animation;
     }
-
-    createSprite(){
-        this.sprite = new Sprite(this.spriteSrc);
+    createSprite(src){        
+        this.sprite = new Sprite(src);
         this.sprite.crop(spriteAnimation.sprites.blocks);        
         this.sprite.staggerFrames = 10;
     }
 
     draw(){
         ctx.fillStyle = 'yellow';
-        ctx.fillRect(this.x, this.y, this.w, this.h);        
+        ctx.fillRect(this.x, this.y, this.w, this.h);
     }
 
     update(){
-        this.draw();
-        this.sprite.draw(this.spriteAnimation, this.x, this.y, this.w, this.h);
+        this.draw();      
+        this.sprite.draw(this.blockType, this.x, this.y, this.w, this.h);
         this.sprite.update();
-        console.log(this.spriteAnimation);
+        
     }
-
-    drawImage(img){
-        this.spriteAnimation = img;
-        this.update();
-    }
-
 }
 
 
