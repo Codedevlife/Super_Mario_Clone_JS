@@ -23,7 +23,7 @@ class Level{
                 // bloco.createSprite('../img/Sprites/Ground_Tileset.png');
                 // bloco.createSprite('../img/Sprites/blocks.webp');
                 bloco.createSprite('../img/Sprites/tiles.png');
-                bloco.setBlockType(world.levels.block_type[tiles[y][x]]);               
+                bloco.setBlockType(world.levels.block_type[tiles[y][x]][0]);                               
                 this.blocos.push(bloco);
 
             });
@@ -38,23 +38,37 @@ class Level{
     }
 
     checkCollision(player){
-        this.blocos.forEach(b=>{
-            // 1. Ignora blocos que não têm colisão (como o céu)
-            if (b.blockType === 'sky') return;
-
+        this.blocos.forEach(bloco=>{
+            let blockType = bloco.blockType.split('_')[0];
+            
+            // gnora blocos que não têm colisão (como o céu)
+            if (blockType === 'sky') return;
+            
             // 2. Verifica os 4 lados (AABB)
-            const colidiu = player.x < b.x + b.w &&  // Lado esquerdo do player < Lado direito do bloco
-                            player.x + player.w > b.x &&  // Lado direito do player > Lado esquerdo do bloco
-                            player.y < b.y + b.h &&  // Topo do player < Base do bloco
-                            player.y + player.h > b.y;    // Base do player > Topo do bloco
+            const colidiu = player.x < bloco.x + bloco.w &&  // Lado esquerdo do player < Lado direito do bloco
+                            player.x + player.w > bloco.x &&  // Lado direito do player > Lado esquerdo do bloco
+                            player.y < bloco.y + bloco.h &&  // Topo do player < Base do bloco
+                            player.y + player.h > bloco.y;    // Base do player > Topo do bloco
 
-            if (colidiu) {
-                this.resolverColisao(player, b);
-            }        
+           
+
+            if(blockType === 'ground'){
+
+               
+            }
+
+            else if(blockType === 'question'){
+                
+            }
+ 
+            if(colidiu){
+                bloco.draw();
+                this.resolverColisaoChao(player, bloco)
+            };     
         });
     }
 
-    resolverColisao(player, bloco) {
+    resolverColisaoChao(player, bloco) {
        // 1. Calcula a distância entre os centros do Mario e do Bloco
         let centroMarioX = player.x + player.w / 2;
         let centroBlocoX = bloco.x + bloco.w / 2;

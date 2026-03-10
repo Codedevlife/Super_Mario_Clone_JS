@@ -1,16 +1,16 @@
 {"levels":{
     "block_type":{
-        "0": "sky",
-        "1": "ground_top",
-        "2": "ground_midlle",
-        "3": "question_block",
-        "4": "idle",
-        "5": "ground_top_left",
-        "6": "ground_top_right",
-        "7": "ground_top_right",
-        "8": "clound",
-        "9": "clound_left",
-        "10": "clound_right"
+        "0": ["sky", {"passThrough": true}],
+        "1": ["ground_top", {"passThrough": false}],
+        "2": ["ground_midlle", {"passThrough": true}],
+        "3": ["question_block", {"passThrough": true}],
+        "4": ["idle", {"passThrough": true}],
+        "5": ["ground_top_left", {"passThrough": false}],
+        "6": ["ground_top_right", {"passThrough": false}],
+        "7": ["ground_top_right", {"passThrough": false}],
+        "8": ["clound", {"passThrough": true}],
+        "9": ["clound_left", {"passThrough": true}],
+        "10": ["clound_right", {"passThrough": true}]
     },
     "1-1": {        
         "tiles": [            

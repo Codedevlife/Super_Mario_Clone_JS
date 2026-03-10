@@ -28,12 +28,13 @@ class Bloco{
     }
 
     draw(){
-        ctx.fillStyle = 'yellow';
-        ctx.fillRect(this.x, this.y, this.w, this.h);
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 5; 
+        ctx.strokeRect(this.x, this.y, this.w, this.h);
     }
 
     update(){
-        this.draw();      
+        // this.draw();     
         this.sprite.draw(this.blockType, this.x, this.y, this.w, this.h);
         this.sprite.update();
         
