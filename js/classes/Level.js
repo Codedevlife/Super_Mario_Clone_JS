@@ -1,7 +1,7 @@
 
 import world from '../../resorces/world.json' with {type: 'json'};
 import Bloco from "./Block.js";
-
+import {ctx} from "./environment.js";
 class Level{
     constructor(){
         this.levels = world.levels;        
@@ -18,12 +18,12 @@ class Level{
 
                 let posX = x * 50;
                 let posY = y * 50;                
-
+                let vecReferente = tiles[y][x];               
+                
                 let bloco = new Bloco(posX, posY, 50, 50);
-                // bloco.createSprite('../img/Sprites/Ground_Tileset.png');
-                // bloco.createSprite('../img/Sprites/blocks.webp');
+                bloco.positionMatrixReferente = vecReferente;
                 bloco.createSprite('../img/Sprites/tiles.png');
-                bloco.setBlockType(world.levels.block_type[tiles[y][x]][0]);                               
+                bloco.setBlockType(world.levels.block_type[vecReferente][0]);                               
                 this.blocos.push(bloco);
 
             });
@@ -34,84 +34,96 @@ class Level{
 
     update(deltaTime){
         this.deltaTime = deltaTime;
-        this.blocos.forEach(b=>b.update());
-    }
-
-    checkCollision(player){
-        this.blocos.forEach(bloco=>{
-            let blockType = bloco.blockType.split('_')[0];
-            
-            // gnora blocos que não têm colisão (como o céu)
-            if (blockType === 'sky') return;
-            
-            // 2. Verifica os 4 lados (AABB)
-            const colidiu = player.x < bloco.x + bloco.w &&  // Lado esquerdo do player < Lado direito do bloco
-                            player.x + player.w > bloco.x &&  // Lado direito do player > Lado esquerdo do bloco
-                            player.y < bloco.y + bloco.h &&  // Topo do player < Base do bloco
-                            player.y + player.h > bloco.y;    // Base do player > Topo do bloco
-
-           
-
-            if(blockType === 'ground'){
-
-               
-            }
-
-            else if(blockType === 'question'){
-                
-            }
- 
-            if(colidiu){
-                bloco.draw();
-                this.resolverColisaoChao(player, bloco)
-            };     
+        
+        this.blocos.forEach(b=>{
+            b.update();
+            b.draw();
         });
     }
 
-    resolverColisaoChao(player, bloco) {
-       // 1. Calcula a distância entre os centros do Mario e do Bloco
+    checkCollision(player){       
+        
+        this.blocos.forEach(b=>{
+
+            if (b.blockType === 'sky') return;
+
+            const colidiu = player.x < b.x + b.w &&
+                        player.x + player.w > b.x &&
+                        player.y < b.y + b.h &&
+                        player.y + player.h > b.y;
+            
+
+            let bloco = world.levels.block_type[b.positionMatrixReferente][1];
+           
+            if(colidiu){
+                player.x = b.x;
+            }
+            if (colidiu) {
+                b.drawCollision();
+                if (bloco.passaPorBaixo) {
+                    // SÓ colide se estiver caindo e acima do topo
+                    // Usamos uma margem (ex: 10px) para evitar bugs de deltaTime
+                    if (player.velocidadeQueda > 0 && (player.y + player.h) <= b.y + 10) {
+                        this.resolverApenasTopo(player, b);
+                    }
+                } else {
+                    // Bloco sólido padrão
+                    this.resolverColisaoCompleta(player, b);
+                }
+            }
+            
+           
+        });
+    }
+    resolverApenasTopo(player, bloco) {
+        // 1. Ajuste de Posição
+        // Coloca os pés do Mario exatamente no topo do bloco
+        player.y = bloco.y - player.h;
+
+        // 2. Ajuste de Física
+        // Zera a velocidade de queda para ele não continuar "atravessando"
+        player.velocidadeQueda = 0;
+
+        // 3. Estado
+        // Avisa que ele está seguro para pular novamente
+        player.noChao = true;
+    }
+    resolverColisaoCompleta(player, bloco) {
+       // 1. Encontrar os centros
         let centroMarioX = player.x + player.w / 2;
         let centroBlocoX = bloco.x + bloco.w / 2;
         let centroMarioY = player.y + player.h / 2;
         let centroBlocoY = bloco.y + bloco.h / 2;
 
-        // 2. Calcula a distância combinada (metade das larguras/alturas)
-        let metadesW = (player.w + bloco.w) / 2;
-        let metadesH = (player.h + bloco.h) / 2;
-
-        // 3. Diferença entre os centros
+        // 2. Calcular distâncias e sobreposição (overlap)
         let dx = centroMarioX - centroBlocoX;
         let dy = centroMarioY - centroBlocoY;
+        let overlapX = (player.w + bloco.w) / 2 - Math.abs(dx);
+        let overlapY = (player.h + bloco.h) / 2 - Math.abs(dy);
 
-        // 4. Calcula o quanto eles entraram um no outro
-        let overlapX = metadesW - Math.abs(dx);
-        let overlapY = metadesH - Math.abs(dy);
-
-        // 5. O eixo com MENOR overlap é o lado que colidiu primeiro
+        // 3. Resolver pelo eixo de menor penetração
         if (overlapX < overlapY) {
+            // Colisão Lateral
             if (dx > 0) {
-                // Colisão na Esquerda do Mario (Direita do Bloco)
-                player.x += overlapX;
-                player.valocidadeHorizontal = 0;
+                player.x += overlapX; // Empurra para a direita
             } else {
-                // Colisão na Direita do Mario (Esquerda do Bloco)
-                player.x -= overlapX;
-                player.valocidadeHorizontal = 0;
+                player.x -= overlapX; // Empurra para a esquerda
             }
+            player.valocidadeHorizontal = 0; // Para o movimento lateral
         } else {
+            // Colisão Vertical
             if (dy > 0) {
-                // Colisão no Topo do Mario (Base do Bloco)
+                // Bateu a cabeça (embaixo do bloco)
                 player.y += overlapY;
-                player.velocidadeQueda = 0; // Para o pulo ao bater a cabeça
+                player.velocidadeQueda = 0; // Começa a cair imediatamente
             } else {
-                // Colisão na Base do Mario (Topo do Bloco - Ficar em pé)
+                // Pousou no topo (em cima do bloco)
                 player.y -= overlapY;
                 player.velocidadeQueda = 0;
                 player.noChao = true;
             }
         }
-    }
-
+    }  
 }
 
 export default Level;

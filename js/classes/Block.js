@@ -12,6 +12,7 @@ class Bloco{
         this.sprite = {};
         
         this.blockType = 'sky';
+        this.positionMatrixReferente = 0;
     }
     
     setBlockType(type){
@@ -29,10 +30,15 @@ class Bloco{
 
     draw(){
         ctx.strokeStyle = 'red';
-        ctx.lineWidth = 5; 
+        ctx.lineWidth = 2; 
         ctx.strokeRect(this.x, this.y, this.w, this.h);
     }
 
+    drawCollision(){
+        ctx.strokeStyle = 'yellow';
+        ctx.lineWidth = 3; 
+        ctx.strokeRect(this.x, this.y, this.w, this.h);
+    }
     update(){
         // this.draw();     
         this.sprite.draw(this.blockType, this.x, this.y, this.w, this.h);

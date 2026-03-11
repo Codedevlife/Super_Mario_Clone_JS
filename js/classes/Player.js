@@ -27,6 +27,7 @@ class Player{
         this.andando = false;
         this.estaMovendo = false;
         this.agachado = false;
+        this.lookUp = false;
         this.direcao = 1; // 1 - apontado para direita / 0-apontado para esquerda
        
         // Controle de teclas
@@ -43,7 +44,7 @@ class Player{
     }
 
     createSprite(){       
-        this.sprite = new Sprite('../img/Sprites/mario.png');
+        this.sprite = new Sprite('../img/Sprites/mario2.png');
         this.sprite.crop(spriteAnimation.sprites.mario);
         this.sprite.staggerFrames = 6;
     }
@@ -75,6 +76,9 @@ class Player{
         } else if (this.agachado) {
             // Se está no chão e a carregar nas teclas, anda
             animName = 'down';
+        } else if (this.lookUp) {
+            // Se está no chão e a carregar nas teclas, anda
+            animName = 'up';
         } else {
             // Se está no chão e parado, fica em idle
             animName = 'idle';
@@ -100,37 +104,48 @@ class Player{
             this.velocidadeQueda = this.forcaDoPulo;
             this.noChao = false;        
         }
+        else if(this.teclas['ArrowUp'] && this.noChao){
+            this.lookUp = true;
+        }
         else if(this.teclas['ArrowDown'] && this.noChao){
-            this.agachado = true;            
+            this.agachado = true;
         }
         else if(this.teclas['ArrowRight']){            
             this.velocidadeHorizontal += this.forcaDeAceleracao * deltaTime;
             this.andando = true;
-            this.direcao = 1;         
+            this.direcao = 1;
+            this.estaMovendo = true;  
  
         }else if(this.teclas['ArrowLeft']){            
             this.velocidadeHorizontal -= this.forcaDeAceleracao * deltaTime;
             this.andando = true;
-            this.direcao = 0;
+            this.direcao = 0;            
+            this.estaMovendo = true;
+        
         }
         else if(!this.teclas['ArrowLeft'] || 
                 !this.teclas['ArrowRight'] ||
-                !this.teclas['ArrowDown'] ){
+                !this.teclas['ArrowDown'] || 
+                !this.teclas['ArrowUp']){
             
             this.velocidadeHorizontal *= this.friccao;
             
-            if( Math.abs(this.velocidadeHorizontal) < 100 ){
-                this.correndo = false;
-            }
-
             if( Math.abs(this.velocidadeHorizontal) < 1 ){
                 this.velocidadeHorizontal = 0;                
             }
 
+            if( Math.abs(this.velocidadeHorizontal) < 100 ){
+                this.correndo = false;
+            }
+
+           
+
             this.estaMovendo = false;
             this.andando = false;
+            this.agachado = false;
             this.agachado = false;            
-                        
+            this.lookUp = false;   
+            this.estaMovendo = false;            
         }
 
         // if(Math.abs(this.velocidadeHorizontal) > (this.valocidadeMaxima)){
@@ -151,6 +166,10 @@ class Player{
             this.noChao = true;
         }
 
+    //    this.halitarTeleporteEsquerdaDireita();
+    }
+    
+    halitarTeleporteEsquerdaDireita(){
         if( this.x < 0 - this.w){
             this.x = GAME_WIDTH;
         }
@@ -158,7 +177,7 @@ class Player{
         if( this.x > GAME_WIDTH){
             this.x = 0 - this.w;
         }
-    }  
+    }
 }
 
 export default Player;
