@@ -29,13 +29,18 @@ class Player{
         this.agachado = false;
         this.lookUp = false;
         this.direcao = 1; // 1 - apontado para direita / 0-apontado para esquerda
-       
+        
+        //Controle de tamanho de mario
+        this.marioSize = "big";
+
         // Controle de teclas
         this.teclas = {};
         this.capturaTeclas();
 
         this.sprite = {};
         this.createSprite();
+
+        
     }
 
     capturaTeclas(){
@@ -43,20 +48,26 @@ class Player{
         window.addEventListener('keyup', e => this.teclas[e.code] = false);
     }
 
-    createSprite(){       
+    createSprite(){        
         this.sprite = new Sprite('../img/Sprites/mario2.png');
-        this.sprite.crop(spriteAnimation.sprites.mario);
+        this.sprite.crop(spriteAnimation.sprites["mario_"+this.marioSize]);
         this.sprite.staggerFrames = 6;
+
     }
 
     draw(){
-        ctx.fillStyle = 'red';
+        ctx.fillStyle = 'orange';
         ctx.fillRect(this.x, this.y, this.w, this.h);
     }
 
     update(deltaTime) {
+        if(this.marioSize == 'big'){
+            this.h = 50 * 2;
+        }
 
         // this.draw();
+
+        
         
         // this.direcao = (this.velocidadeHorizontal < 0) ? 0 : 1;
 
