@@ -55,9 +55,10 @@ class Level{
 
             let bloco = world.levels.block_type[b.positionMatrixReferente][1];
            
-            if(colidiu){
-                player.x = b.x;
-            }
+            // if(colidiu){
+            //     player.x = b.x;
+            // }
+
             if (colidiu) {
                 b.drawCollision();
                 if (bloco.passaPorBaixo) {

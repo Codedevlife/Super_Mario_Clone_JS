@@ -132,6 +132,7 @@ class Player{
             
             if( Math.abs(this.velocidadeHorizontal) < 1 ){
                 this.velocidadeHorizontal = 0;                
+                this.estaMovendo = false;                
             }
 
             if( Math.abs(this.velocidadeHorizontal) < 100 ){
@@ -144,8 +145,7 @@ class Player{
             this.andando = false;
             this.agachado = false;
             this.agachado = false;            
-            this.lookUp = false;   
-            this.estaMovendo = false;            
+            this.lookUp = false;               
         }
 
         // if(Math.abs(this.velocidadeHorizontal) > (this.valocidadeMaxima)){
