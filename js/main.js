@@ -21,10 +21,12 @@ function loop(currentTime) {
     ctx.translate(-cameraX, 0);
 
     level.update(deltaTime);
-     
-    player.update(deltaTime);
     
     level.checkCollision(player);   
+    
+    player.update(deltaTime);
+    
+    
 
     ctx.restore();
     

@@ -37,7 +37,7 @@ class Level{
         
         this.blocos.forEach(b=>{
             b.update();
-            b.draw();
+            // b.draw();
         });
     }
 
@@ -60,14 +60,20 @@ class Level{
             // }
 
             if (colidiu) {
-                b.drawCollision();
+                // player.valocidadeHorizontal = 0;
+                // b.drawCollision();
                 if (bloco.passaPorBaixo) {
                     // SÓ colide se estiver caindo e acima do topo
                     // Usamos uma margem (ex: 10px) para evitar bugs de deltaTime
                     if (player.velocidadeQueda > 0 && (player.y + player.h) <= b.y + 10) {
                         this.resolverApenasTopo(player, b);
                     }
-                } else {
+
+                } else if(b.blockType == 'power_up'){
+                    b.setBlockType('sky');
+                    player.size = 'big';
+                    player.y - 50;                  
+                }else {
                     // Bloco sólido padrão
                     this.resolverColisaoCompleta(player, b);
                 }

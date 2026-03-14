@@ -1,5 +1,5 @@
 
-import {ctx, GAME_HEIGHT, GAME_WIDTH} from "./environment.js";
+import {canvas, ctx, GAME_HEIGHT, GAME_WIDTH} from "./environment.js";
 import Sprite from "./Sprite.js";
 import spriteAnimation from '../../resorces/world.json' with {type: 'json'};
 
@@ -16,6 +16,7 @@ class Player{
         this.gravidade = 3000;        
         this.velocidadeQueda = 0;        
         this.forcaDoPulo = -1000;
+        // this.forcaDoPulo = -1500;
 
         this.velocidadeHorizontal = 0;        
         this.valocidadeMaxima = 800;  
@@ -24,6 +25,7 @@ class Player{
 
         this.noChao = false;
         this.falling = false;
+        this.jumping = false;
         this.correndo = false;
         this.andando = false;
         this.estaMovendo = false;
@@ -32,7 +34,7 @@ class Player{
         this.direcao = 1; // 1 - apontado para direita / 0-apontado para esquerda
         
         //Controle de tamanho de mario
-        this.marioSize = "big";
+        this.size = "small"; // big | small
 
         // Controle de teclas
         this.teclas = {};
@@ -47,57 +49,81 @@ class Player{
     capturaTeclas(){
         window.addEventListener('keydown', e => this.teclas[e.code] = true);
         window.addEventListener('keyup', e => this.teclas[e.code] = false);
+
+    //    this.mouseEvent();
+
+    }
+
+    mouseEvent(){
+         let rect = canvas.getBoundingClientRect();
+
+        let mouseDown = false;
+
+        window.addEventListener('mousedown', e => {            
+            let x = e.clientX - rect.left;
+            let y = e.clientY - rect.top;
+
+            this.x = x;
+            this.y = y;
+            mouseDown = true;
+        });
+
+        window.addEventListener('mouseup',e=>mouseDown=false);
+
+        window.addEventListener('mousemove', e => {            
+            let x = e.clientX - rect.left;
+            let y = e.clientY - rect.top;
+
+            if(mouseDown){
+                this.x = x;
+                this.y = y;
+            }
+        });
     }
 
     createSprite(){        
         this.sprite = new Sprite('../img/Sprites/mario2.png');
-        this.sprite.crop(spriteAnimation.sprites["mario_"+this.marioSize]);
+        this.sprite.crop(spriteAnimation.sprites["mario_"+this.size]);
         this.sprite.staggerFrames = 6;
 
     }
 
     draw(){
-        ctx.fillStyle = 'orange';
-        ctx.fillRect(this.x, this.y, this.w, this.h);
+        // ctx.fillStyle = 'orange';
+        // ctx.fillRect(this.x, this.y, this.w, this.h);
+
+        ctx.strokeStyle = 'orange';
+        ctx.lineWidth = 3; 
+        ctx.strokeRect(this.x, this.y, this.w, this.h);
     }
 
     update(deltaTime) {
-        if(this.marioSize == 'big'){
+       
+        if(this.size == 'big'){
             this.h = 50 * 2;
         }
 
         // this.draw();
 
-        
-        
-        // this.direcao = (this.velocidadeHorizontal < 0) ? 0 : 1;
-
         let animName = 'idle';
 
-        if (!this.noChao) {
-            // Se não está no chão, a prioridade máxima é o pulo
+        if (this.jumping) {
             animName = 'jump';
+        } else if (this.falling) {
+            animName = 'fall'; 
+        } else if (this.agachado) {
+            animName = 'down';
+        } else if (this.lookUp) {
+            animName = 'up';
+        } else if (this.correndo) {
+            animName = 'run';
+            this.sprite.staggerFrames = 3;
         } else if (this.andando) {
-            // Se está no chão e a carregar nas teclas, anda
             animName = 'walk';
             this.sprite.staggerFrames = 4;
-        } else if (this.correndo){
-            // Se está no chão e a carregar nas teclas, anda
-            animName = 'run';
-            this.sprite.staggerFrames = 3;            
-        } else if (this.agachado) {
-            // Se está no chão e a carregar nas teclas, anda
-            animName = 'down';
-        } else if (this.falling) {
-            // Se está no chão e a carregar nas teclas, anda
-            animName = 'fall';
-        } else if (this.lookUp) {
-            // Se está no chão e a carregar nas teclas, anda
-            animName = 'up';
         } else {
-            // Se está no chão e parado, fica em idle
             animName = 'idle';
-        }   
+        }
         
         this.sprite.update();
 
@@ -113,11 +139,29 @@ class Player{
             this.sprite.draw(animName, this.x, this.y, this.w, this.h);
         }              
         
-        ctx.restore();        
+        ctx.restore();    
+        
+        if(this.noChao){ 
+            this.jumping = false;  
+            this.falling = false;
+        } else {
+            // 2. Se NÃO está no chão, determine se está subindo ou descendo
+            if (this.velocidadeQueda < 0) {
+                this.jumping = true;
+                this.falling = false;
+            } else if (this.velocidadeQueda > 0) {
+                this.jumping = false; // Paramos de "pular" para começar a "cair"
+                this.falling = true;
+            }
+        }
+        
 
         if( this.teclas['Space'] && this.noChao ){
-            this.velocidadeQueda = this.forcaDoPulo;
-            this.noChao = false;        
+            if(this.noChao){
+                this.jumping = true;
+                this.velocidadeQueda = this.forcaDoPulo;
+                this.noChao = false; 
+            }
         }
         else if(this.teclas['ArrowUp'] && this.noChao){
             this.lookUp = true;
@@ -136,7 +180,6 @@ class Player{
             this.andando = true;
             this.direcao = 0;            
             this.estaMovendo = true;
-        
         }
         else if(!this.teclas['ArrowLeft'] || 
                 !this.teclas['ArrowRight'] ||
@@ -154,25 +197,18 @@ class Player{
                 this.correndo = false;
             }
 
-           
-
             this.estaMovendo = false;
             this.andando = false;
             this.agachado = false;
             this.agachado = false;            
-            this.lookUp = false;
-            this.falling = false;                
+            this.lookUp = false;                            
         }
 
-        // if(Math.abs(this.velocidadeHorizontal) > (this.valocidadeMaxima)){
-        //     this.andando = false;
-        //     this.correndo = true;                
-        // }
-
-        if(this.velocidadeQueda > 0 ){
-            this.falling = true;
+        if(Math.abs(this.velocidadeHorizontal) > (this.valocidadeMaxima)){
+            this.andando = false;
+            this.correndo = true;                
         }
-
+        
         if (this.velocidadeHorizontal > this.valocidadeMaxima) this.velocidadeHorizontal = this.valocidadeMaxima;
         if (this.velocidadeHorizontal < -this.valocidadeMaxima) this.velocidadeHorizontal = -this.valocidadeMaxima;
         
@@ -183,7 +219,7 @@ class Player{
         if( this.y > GAME_HEIGHT - this.h ){
             this.y = GAME_HEIGHT - this.h;
             this.velocidadeQueda = 0;
-            this.noChao = true;
+            this.noChao = true;            
         }
 
     //    this.halitarTeleporteEsquerdaDireita();
