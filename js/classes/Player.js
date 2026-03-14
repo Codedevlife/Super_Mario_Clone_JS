@@ -23,6 +23,7 @@ class Player{
         this.friccao = 0.90;
 
         this.noChao = false;
+        this.falling = false;
         this.correndo = false;
         this.andando = false;
         this.estaMovendo = false;
@@ -87,6 +88,9 @@ class Player{
         } else if (this.agachado) {
             // Se está no chão e a carregar nas teclas, anda
             animName = 'down';
+        } else if (this.falling) {
+            // Se está no chão e a carregar nas teclas, anda
+            animName = 'fall';
         } else if (this.lookUp) {
             // Se está no chão e a carregar nas teclas, anda
             animName = 'up';
@@ -156,13 +160,18 @@ class Player{
             this.andando = false;
             this.agachado = false;
             this.agachado = false;            
-            this.lookUp = false;               
+            this.lookUp = false;
+            this.falling = false;                
         }
 
         // if(Math.abs(this.velocidadeHorizontal) > (this.valocidadeMaxima)){
         //     this.andando = false;
         //     this.correndo = true;                
         // }
+
+        if(this.velocidadeQueda > 0 ){
+            this.falling = true;
+        }
 
         if (this.velocidadeHorizontal > this.valocidadeMaxima) this.velocidadeHorizontal = this.valocidadeMaxima;
         if (this.velocidadeHorizontal < -this.valocidadeMaxima) this.velocidadeHorizontal = -this.valocidadeMaxima;
