@@ -19,12 +19,14 @@ function loop(currentTime) {
     ctx.save();
     let cameraX = Math.max(0, player.x - GAME_WIDTH / 4); 
     ctx.translate(-cameraX, 0);
-
+    
+    
     level.update(deltaTime);
     
     level.checkCollision(player);   
     
     player.update(deltaTime);
+    
     
     
 
