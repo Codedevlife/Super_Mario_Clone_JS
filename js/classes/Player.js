@@ -21,7 +21,8 @@ class Player{
         this.velocidadeHorizontal = 0;        
         this.valocidadeMaxima = 800;  
         this.forcaDeAceleracao = 2000;        
-        this.friccao = 0.90;
+        // this.friccao = 0.90;
+        this.friccao = 0;
 
         this.noChao = false;
         this.falling = false;
@@ -34,7 +35,7 @@ class Player{
         this.direcao = 1; // 1 - apontado para direita / 0-apontado para esquerda
         
         //Controle de tamanho de mario
-        this.size = "small"; // big | small
+        this.size = "big"; // big | small
 
         // Controle de teclas
         this.teclas = {};

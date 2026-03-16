@@ -54,14 +54,13 @@ class Level{
             
 
             let bloco = world.levels.block_type[b.positionMatrixReferente][1];
-           
-            // if(colidiu){
-            //     player.x = b.x;
-            // }
-
+                      
             if (colidiu) {
                 // player.valocidadeHorizontal = 0;
-                // b.drawCollision();
+                 b.drawCollision();
+                
+                if(bloco.semColisao) return;
+
                 if (bloco.passaPorBaixo) {
                     // SÓ colide se estiver caindo e acima do topo
                     // Usamos uma margem (ex: 10px) para evitar bugs de deltaTime
