@@ -22,7 +22,7 @@ class Level{
                 
                 let bloco = new Bloco(posX, posY, 50, 50);
                 bloco.positionMatrixReferente = vecReferente;
-                bloco.createSprite('../img/Sprites/tiles.png');
+                bloco.createSprite('../img/Sprites/tiles_.png');
                 bloco.setBlockType(world.levels.block_type[vecReferente][0]);                               
                 this.blocos.push(bloco);
 
@@ -36,8 +36,26 @@ class Level{
         this.deltaTime = deltaTime;
         
         this.blocos.forEach(b=>{
-            b.update();
-            // b.draw();
+            
+          
+            
+            if(b.blockType.split('_')[0] == 'pipe'){
+                ctx.save();
+                ctx.translate(0, 0);
+                ctx.rotate((45 * Math.PI) / 180);
+                
+                
+                ctx.restore();
+                b.update();
+                b.draw();  
+                
+            }else{
+
+                b.update();
+                b.draw();
+            }
+            
+            
         });
     }
 
@@ -45,6 +63,8 @@ class Level{
         
         this.blocos.forEach(b=>{
 
+            // console.log(b.blockType);
+           
             if (b.blockType === 'sky') return;
 
             const colidiu = player.x < b.x + b.w &&
@@ -76,11 +96,13 @@ class Level{
                     // Bloco sólido padrão
                     this.resolverColisaoCompleta(player, b);
                 }
+
             }
             
            
         });
     }
+
     resolverApenasTopo(player, bloco) {
         // 1. Ajuste de Posição
         // Coloca os pés do Mario exatamente no topo do bloco
