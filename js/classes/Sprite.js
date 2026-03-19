@@ -46,12 +46,14 @@ class Sprite{
 
          if (!frame || !this.spriteCarregada) return;
         
+      
         ctx.drawImage(this.image, 
             frame.x, frame.y,
             frame.w, frame.h,
 
             x, y,            
             w, h);
+
     }
 
     update(){

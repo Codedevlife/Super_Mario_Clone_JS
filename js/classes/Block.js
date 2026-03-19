@@ -29,8 +29,7 @@ class Bloco{
     }
 
     draw(){
-        if(this.blockType == 'sky') return;
-
+        if(this.blockType == 'sky') return;        
         ctx.strokeStyle = 'red';
         ctx.lineWidth = 2; 
         ctx.strokeRect(this.x, this.y, this.w, this.h);
@@ -42,10 +41,9 @@ class Bloco{
         ctx.strokeRect(this.x, this.y, this.w, this.h);
     }
     update(){
-        // this.draw();     
-        this.sprite.draw(this.blockType, this.x, this.y, this.w, this.h);
+        // this.draw();
+        this.sprite.draw(this.blockType, this.x, this.y, this.w, this.h);        
         this.sprite.update();
-        
     }
 }
 

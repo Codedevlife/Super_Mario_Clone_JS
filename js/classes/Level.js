@@ -35,26 +35,29 @@ class Level{
     update(deltaTime){
         this.deltaTime = deltaTime;
         
-        this.blocos.forEach(b=>{
-            
-          
-            
+        this.blocos.forEach(b=>{        
+ 
             if(b.blockType.split('_')[0] == 'pipe'){
                 ctx.save();
-                ctx.translate(0, 0);
+                
+                ctx.translate(b.x + b.w/2, b.y + b.h/2);
+
                 ctx.rotate((45 * Math.PI) / 180);
+                console.log(b.x, b.y);
                 
-                
-                ctx.restore();
+                b.x = 0;
+                b.y = 0;
+
                 b.update();
-                b.draw();  
+                b.draw();
+
+                ctx.restore();
                 
             }else{
 
                 b.update();
                 b.draw();
             }
-            
             
         });
     }
@@ -63,7 +66,7 @@ class Level{
         
         this.blocos.forEach(b=>{
 
-            // console.log(b.blockType);
+            // console.log(b.blockType.split('_'));
            
             if (b.blockType === 'sky') return;
 
@@ -74,12 +77,20 @@ class Level{
             
 
             let bloco = world.levels.block_type[b.positionMatrixReferente][1];
-                      
+
             if (colidiu) {
                 // player.valocidadeHorizontal = 0;
                  b.drawCollision();
                 
                 if(bloco.semColisao) return;
+
+                if(b.blockType.split('_')[1] == 'angle' &&
+                    b.blockType.split('_')[3] == 'midle' ){
+                    console.log("Player", player.x, player.y);
+                    console.log("Bloco", b.x, b.y);
+                    let altura_desejada = (b.y - b.h) + (b.x - (player.x+player.w));
+                    player.y = altura_desejada - 20;
+                }
 
                 if (bloco.passaPorBaixo) {
                     // SÓ colide se estiver caindo e acima do topo
@@ -92,6 +103,8 @@ class Level{
                     b.setBlockType('sky');
                     player.size = 'big';
                     player.y - 50;                  
+                } else if(b.blockType.split('_')[1] == 'angle'){
+                    console.log(b);
                 }else {
                     // Bloco sólido padrão
                     this.resolverColisaoCompleta(player, b);
@@ -101,6 +114,10 @@ class Level{
             
            
         });
+    }
+
+    resolverColisaoEmAngulo(player, bloco){
+
     }
 
     resolverApenasTopo(player, bloco) {
