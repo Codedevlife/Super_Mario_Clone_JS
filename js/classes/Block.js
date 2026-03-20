@@ -34,7 +34,22 @@ class Bloco{
         ctx.lineWidth = 2; 
         ctx.strokeRect(this.x, this.y, this.w, this.h);
     }
+    drawRotated(angulo) {
+        ctx.save();
+        
+        // 1. Movemos para o centro do bloco
+        ctx.translate(this.x + this.w / 2, this.y + this.h / 2);
+        
+        // 2. Giramos
+        ctx.rotate((angulo * Math.PI) / 180);
+        
+        // 3. DESENHAMOS RELATIVO AO CENTRO
+        // Como o centro agora é 0,0, desenhamos metade para trás e metade para cima
+        this.sprite.draw(this.blockType, -this.w / 2, -this.h / 2, this.w, this.h);
+        this.sprite.update();
 
+        ctx.restore();
+    }
     drawCollision(){
         ctx.strokeStyle = 'yellow';
         ctx.lineWidth = 3; 

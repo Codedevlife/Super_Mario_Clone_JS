@@ -37,28 +37,16 @@ class Level{
         
         this.blocos.forEach(b=>{        
  
-            if(b.blockType.split('_')[0] == 'pipe'){
-                ctx.save();
-                
-                ctx.translate(b.x + b.w/2, b.y + b.h/2);
+//             if (b.blockType.includes('pipe') &&
+//                 b.blockType.includes('angle')) {
+// //                b.sprite.update(); // Atualiza a animação (tempo)
+//                 // b.drawRotated(90); // Desenha inclinado
 
-                ctx.rotate((45 * Math.PI) / 180);
-                console.log(b.x, b.y);
-                
-                b.x = 0;
-                b.y = 0;
-
-                b.update();
-                b.draw();
-
-                ctx.restore();
-                
-            }else{
-
-                b.update();
-                b.draw();
-            }
-            
+//             } else {
+//                 b.update(); // Desenho normal para blocos retos
+//             }
+            b.update();
+            // b.draw();
         });
     }
 
