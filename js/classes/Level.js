@@ -46,7 +46,7 @@ class Level{
 //                 b.update(); // Desenho normal para blocos retos
 //             }
             b.update();
-            // b.draw();
+            b.draw();
         });
     }
 
@@ -73,9 +73,7 @@ class Level{
                 if(bloco.semColisao) return;
 
                 if(b.blockType.split('_')[1] == 'angle' &&
-                    b.blockType.split('_')[3] == 'midle' ){
-                    console.log("Player", player.x, player.y);
-                    console.log("Bloco", b.x, b.y);
+                    b.blockType.split('_')[3] == 'midle' ){                    
                     let altura_desejada = (b.y - b.h) + (b.x - (player.x+player.w));
                     player.y = altura_desejada - 20;
                 }
