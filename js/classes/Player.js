@@ -94,17 +94,19 @@ class Player{
         // ctx.fillRect(this.x, this.y, this.w, this.h);
 
         ctx.strokeStyle = 'orange';
-        ctx.lineWidth = 3; 
+        ctx.lineWidth = 2; 
         ctx.strokeRect(this.x, this.y, this.w, this.h);
     }
 
     update(deltaTime) {
-       
+        
+        this.deltaTime = deltaTime;
+
         if(this.size == 'big'){
             this.h = 50 * 2;
         }
 
-        // this.draw();
+        this.draw();
 
         let animName = 'idle';
 
@@ -222,7 +224,6 @@ class Player{
             this.velocidadeQueda = 0;
             this.noChao = true;            
         }
-
     //    this.halitarTeleporteEsquerdaDireita();
     }
     

@@ -4,7 +4,7 @@ import Player from "./classes/Player.js";
 import { ctx, GAME_HEIGHT, GAME_WIDTH } from "./classes/environment.js";
 import Level from "./classes/Level.js";
 
-let player = new Player(3900, 0 , 50, 50);
+let player = new Player(2500, 0 , 50, 50);
 let level = new Level();
 
 level.loadLevel('1-1');
@@ -18,7 +18,7 @@ function loop(currentTime) {
     // --- Lógica ---
     ctx.save();
     let cameraX = Math.max(0, player.x - GAME_WIDTH / 4); 
-    ctx.translate(-cameraX, 0);
+    ctx.translate(Math.floor(-cameraX), 0);
     
     
     level.update(deltaTime);

@@ -2,6 +2,7 @@
 import world from '../../resorces/world.json' with {type: 'json'};
 import Bloco from "./Block.js";
 import {ctx} from "./environment.js";
+import Player from './Player.js';
 class Level{
     constructor(){
         this.levels = world.levels;        
@@ -22,6 +23,7 @@ class Level{
                 
                 let bloco = new Bloco(posX, posY, 50, 50);
                 bloco.positionMatrixReferente = vecReferente;
+                // bloco.createSprite('../img/Sprites/tiles.png');
                 bloco.createSprite('../img/Sprites/tiles_.png');
                 bloco.setBlockType(world.levels.block_type[vecReferente][0]);                               
                 this.blocos.push(bloco);
@@ -35,16 +37,7 @@ class Level{
     update(deltaTime){
         this.deltaTime = deltaTime;
         
-        this.blocos.forEach(b=>{        
- 
-//             if (b.blockType.includes('pipe') &&
-//                 b.blockType.includes('angle')) {
-// //                b.sprite.update(); // Atualiza a animação (tempo)
-//                 // b.drawRotated(90); // Desenha inclinado
-
-//             } else {
-//                 b.update(); // Desenho normal para blocos retos
-//             }
+        this.blocos.forEach(b=>{
             b.update();
             b.draw();
         });
@@ -72,38 +65,63 @@ class Level{
                 
                 if(bloco.semColisao) return;
 
-                if(b.blockType.split('_')[1] == 'angle' &&
-                    b.blockType.split('_')[3] == 'midle' ){                    
-                    let altura_desejada = (b.y - b.h) + (b.x - (player.x+player.w));
-                    player.y = altura_desejada - 20;
-                }
-
-                if (bloco.passaPorBaixo) {
-                    // SÓ colide se estiver caindo e acima do topo
-                    // Usamos uma margem (ex: 10px) para evitar bugs de deltaTime
-                    if (player.velocidadeQueda > 0 && (player.y + player.h) <= b.y + 10) {
-                        this.resolverApenasTopo(player, b);
-                    }
-
-                } else if(b.blockType == 'power_up'){
-                    b.setBlockType('sky');
-                    player.size = 'big';
-                    player.y - 50;                  
-                } else if(b.blockType.split('_')[1] == 'angle'){
-                    console.log(b);
-                }else {
-                    // Bloco sólido padrão
+                if(b.blockType.includes("ground")  && ! b.blockType.includes("angle")){                                      
                     this.resolverColisaoCompleta(player, b);
-                }
 
+                } else if(b.blockType.includes("angle")){ 
+
+                    this.checkSlopeCollision(player, b);
+                } 
             }
             
            
         });
     }
 
-    resolverColisaoEmAngulo(player, bloco){
+    checkSlopeCollision(player, bloco) {
+        player.noChao = true;
+        // let altura_desejada = (b.y - b.h) + (b.x - (player.x+player.w));
+        // player.y = altura_desejada;
+        // player.noChao = true;
+        // player.velocidadeQueda = 0;
 
+        // 1. Calcula a posição horizontal do CENTRO do Mario dentro do bloco (0 a 16)
+        // Usamos o centro (w/2) para que ele não fique "manco" ao subir
+        let centroMarioX = player.x + (player.w / 2);
+        let posicaoRelativaX = centroMarioX - bloco.x;
+
+        // 2. Limita o valor entre 0 e a largura do bloco (16) para evitar erros nas bordas
+        posicaoRelativaX = Math.max(0, Math.min(posicaoRelativaX, bloco.w));
+
+        // 3. Cálculo da Altura do Chão (Y Alvo)
+        // Em 45°, para cada 1px em X, subimos ou descemos 1px em Y.
+        let yAlvo;
+
+        if (bloco.blockType.includes("angle")) { 
+            // Rampa que SOBE da esquerda para a direita ( / )
+            yAlvo = (bloco.y + bloco.h) - posicaoRelativaX;
+        } else { 
+            // Rampa que DESCE da esquerda para a direita ( \ )
+            yAlvo = bloco.y + posicaoRelativaX;
+        }
+
+        // 4. RESOLUÇÃO: Se os pés do Mario passarem do yAlvo, ele está no chão
+        if (player.y + player.h >= yAlvo) {
+            player.y = yAlvo - player.h; // "Snap" no chão da rampa
+            player.velocidadeQueda = 0;   // Zera a gravidade
+            player.noChao = true;         // Permite pular
+            
+            // BÔNUS: Força de deslize (Gravidade lateral na rampa)
+            // Se o jogador não estiver apertando nada, ele escorrega
+            if (!player.estaMovendo) {
+                let forcaDeslize = 150; 
+                if (bloco.blockType.includes("angle")) {
+                    player.velocidadeHorizontal -= forcaDeslize * player.deltaTime;
+                } else {
+                    player.velocidadeHorizontal += forcaDeslize * player.deltaTime;
+                }
+            }
+        }
     }
 
     resolverApenasTopo(player, bloco) {
@@ -119,6 +137,7 @@ class Level{
         // Avisa que ele está seguro para pular novamente
         player.noChao = true;
     }
+
     resolverColisaoCompleta(player, bloco) {
        // 1. Encontrar os centros
         let centroMarioX = player.x + player.w / 2;
@@ -157,4 +176,4 @@ class Level{
     }  
 }
 
-export default Level;
+export default Level;;
