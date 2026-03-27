@@ -4,7 +4,7 @@ import Player from "./classes/Player.js";
 import { ctx, GAME_HEIGHT, GAME_WIDTH } from "./classes/environment.js";
 import Level from "./classes/Level.js";
 
-let player = new Player(2500, 0 , 50, 50);
+let player = new Player(6580, 0 , 50, 50);
 let level = new Level();
 
 level.loadLevel('1-1');

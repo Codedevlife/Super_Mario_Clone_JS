@@ -39,7 +39,7 @@ class Level{
         
         this.blocos.forEach(b=>{
             b.update();
-            b.draw();
+            // b.draw();
         });
     }
 
@@ -65,13 +65,17 @@ class Level{
                 
                 if(bloco.semColisao) return;
 
-                if(b.blockType.includes("ground")  && ! b.blockType.includes("angle")){                                      
+                if(!b.blockType.includes("angle") &&
+                    b.blockType.includes("ground")                   
+                    ){                                      
                     this.resolverColisaoCompleta(player, b);
 
                 } else if(b.blockType.includes("angle")){ 
 
                     this.checkSlopeCollision(player, b);
-                } 
+                } else {
+                    this.resolverColisaoCompleta(player, b);
+                }
             }
             
            

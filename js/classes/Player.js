@@ -92,6 +92,10 @@ class Player{
     draw(){
         // ctx.fillStyle = 'orange';
         // ctx.fillRect(this.x, this.y, this.w, this.h);
+        
+        ctx.font = "20px serif";
+        ctx.fillStyle = 'black';
+        ctx.fillText(`X: ${Math.floor(this.x)}, Y:${Math.floor(this.y)}`, this.x - (this.w/2), this.y - 10);
 
         ctx.strokeStyle = 'orange';
         ctx.lineWidth = 2; 
