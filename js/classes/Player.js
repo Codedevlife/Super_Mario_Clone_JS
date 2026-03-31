@@ -35,7 +35,7 @@ class Player{
         this.direcao = 1; // 1 - apontado para direita / 0-apontado para esquerda
         
         //Controle de tamanho de mario
-        this.size = "big"; // big | small
+        this.size = "small"; // big | small
 
         // Controle de teclas
         this.teclas = {};
