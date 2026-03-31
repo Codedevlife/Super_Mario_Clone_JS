@@ -39,7 +39,7 @@ class Level{
         
         this.blocos.forEach(b=>{
             b.update();
-            b.draw();
+            // b.draw();
         });
     }
 
