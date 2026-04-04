@@ -31,7 +31,7 @@ class Bloco{
     draw(){
         if(this.blockType == 'sky') return;        
         ctx.strokeStyle = 'red';
-        ctx.lineWidth = 2; 
+        ctx.lineWidth = 0.1; 
         ctx.strokeRect(this.x, this.y, this.w, this.h);
     }
     drawRotated(angulo) {
